@@ -5,6 +5,15 @@
 /.pnp
 .pnp.js
 
+# uploaded files
+/uploads
+
+# Python AI service
+ai-service/__pycache__/
+ai-service/.env
+ai-service/venv/
+ai-service/*.pyc
+
 # testing
 /coverage
 
