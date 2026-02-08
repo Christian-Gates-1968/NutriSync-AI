@@ -68,3 +68,186 @@
     @apply px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-200;
   }
 }
+
+/* ================================================
+   NutriSync Login Page
+   ================================================ */
+.nutrisync-login-page {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  margin: -10px;
+  background: #060b18;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-family: 'Inter', 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+.nutrisync-login-bg-glow {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(124,77,255,0.15) 0%, rgba(59,130,246,0.08) 40%, transparent 70%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: login-pulse 6s ease-in-out infinite;
+}
+
+@keyframes login-pulse {
+  0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+}
+
+.nutrisync-login-card {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 420px;
+  padding: 3rem 2.5rem;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(124, 77, 255, 0.15);
+  border-radius: 24px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4), 0 0 80px rgba(124, 77, 255, 0.06);
+}
+
+.nutrisync-login-logo {
+  width: 100px !important;
+  height: 100px;
+  object-fit: contain;
+  margin-bottom: 1rem !important;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(124, 77, 255, 0.2);
+}
+
+.nutrisync-login-title {
+  color: #fff !important;
+  font-size: 2rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.3rem 0 !important;
+  text-align: center !important;
+  background: linear-gradient(135deg, #fff 30%, #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.nutrisync-login-subtitle {
+  color: rgba(148, 163, 184, 0.9) !important;
+  font-size: 0.9rem !important;
+  margin: 0 0 2rem 0 !important;
+  text-align: center;
+}
+
+.nutrisync-login-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.nutrisync-login-field {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.nutrisync-login-field label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(203, 213, 225, 0.7);
+  margin-bottom: 0.4rem;
+  letter-spacing: 0.03em;
+}
+
+.nutrisync-login-field input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 12px;
+  color: #fff;
+  font-size: 0.95rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.25s, box-shadow 0.25s;
+  box-sizing: border-box;
+}
+
+.nutrisync-login-field input::placeholder {
+  color: rgba(148, 163, 184, 0.4);
+}
+
+.nutrisync-login-field input:focus {
+  border-color: #7c4dff;
+  box-shadow: 0 0 0 3px rgba(124, 77, 255, 0.2);
+}
+
+.nutrisync-login-btn {
+  width: 100%;
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #7c4dff, #3b82f6);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: opacity 0.2s, transform 0.15s, box-shadow 0.25s;
+  box-shadow: 0 4px 20px rgba(124, 77, 255, 0.3);
+}
+
+.nutrisync-login-btn:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 28px rgba(124, 77, 255, 0.45);
+}
+
+.nutrisync-login-divider {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  margin: 1.3rem 0;
+}
+
+.nutrisync-login-divider::before,
+.nutrisync-login-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(148, 163, 184, 0.15);
+}
+
+.nutrisync-login-divider span {
+  padding: 0 0.8rem;
+  font-size: 0.75rem;
+  color: rgba(148, 163, 184, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 500;
+}
+
+.nutrisync-login-google-note {
+  color: rgba(148, 163, 184, 0.45) !important;
+  font-size: 0.72rem !important;
+  margin: 0.6rem 0 0 0 !important;
+  text-align: center;
+}
+
+.nutrisync-login-footer {
+  color: rgba(148, 163, 184, 0.35) !important;
+  font-size: 0.72rem !important;
+  margin: 2rem 0 0 0 !important;
+  text-align: center;
+}

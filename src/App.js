@@ -263,34 +263,62 @@ const[cal,setCal]=useState('2500');
       </NutriSyncLayout>
     </>
     :
-    <div style={{backgroundColor:"#0f172a",width:"100vw",height:"100vh",margin:"-10px",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
-      <img src={logoo} style={{width:"170px",marginBottom:"20px"}}></img>
-      <div style={{color:"white",fontWeight:"700",fontSize:"48px",marginBottom:"30px",textAlign:"center"}}>NutriSync AI</div>
-      <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:"16px"}}>
-        <GoogleLogin
-          clientId={CLIENT_ID}
-          buttonText='Sign In With Google'
-          onSuccess={login}
-          onFailure={handleLoginFailure}
-          cookiePolicy={'single_host_origin'}
-          responseType='code,token'
-          scope={'https://www.googleapis.com/auth/fitness.activity.read'}
-        />
-        <button
-          onClick={() => {
-            setUserResponse({ accessToken: 'dev-bypass', name: 'Dev User' });
-            setUser({ haslogin: true, accessToken: 'dev-bypass', name: 'Dev User' });
-          }}
-          style={{
-            marginTop:"10px",padding:"10px 32px",borderRadius:"12px",
-            background:"linear-gradient(135deg,#3b82f6,#8b5cf6)",
-            color:"white",border:"none",fontSize:"16px",fontWeight:"600",
-            cursor:"pointer",letterSpacing:"0.5px"
-          }}
-        >
-          🚀 Preview Dashboard (Dev Mode)
-        </button>
-        <p style={{color:"#64748b",fontSize:"12px",marginTop:"4px"}}>No login required — explore with sample data</p>
+    <div className="nutrisync-login-page">
+      <div className="nutrisync-login-bg-glow" />
+      <div className="nutrisync-login-card">
+        <img src={logoo} alt="NutriSync AI" className="nutrisync-login-logo" />
+        <h1 className="nutrisync-login-title">NutriSync AI</h1>
+        <p className="nutrisync-login-subtitle">Your intelligent health &amp; nutrition companion</p>
+
+        <div className="nutrisync-login-form">
+          <div className="nutrisync-login-field">
+            <label>Display Name</label>
+            <input
+              type="text"
+              placeholder="Enter your name"
+              id="nutrisync-login-name"
+              defaultValue=""
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  const name = document.getElementById('nutrisync-login-name').value.trim() || 'User';
+                  setUserResponse({ accessToken: 'local-session', name });
+                  setUser({ haslogin: true, accessToken: 'local-session', name });
+                }
+              }}
+            />
+          </div>
+          <button
+            className="nutrisync-login-btn"
+            onClick={() => {
+              const name = document.getElementById('nutrisync-login-name').value.trim() || 'User';
+              setUserResponse({ accessToken: 'local-session', name });
+              setUser({ haslogin: true, accessToken: 'local-session', name });
+            }}
+          >
+            Get Started →
+          </button>
+
+          <div className="nutrisync-login-divider">
+            <span>or</span>
+          </div>
+
+          <GoogleLogin
+            clientId={CLIENT_ID}
+            buttonText='Continue with Google'
+            onSuccess={login}
+            onFailure={handleLoginFailure}
+            cookiePolicy={'single_host_origin'}
+            responseType='code,token'
+            scope={'https://www.googleapis.com/auth/fitness.activity.read'}
+          />
+          <p className="nutrisync-login-google-note">
+            Connect Google Fit for automatic health data sync
+          </p>
+        </div>
+
+        <p className="nutrisync-login-footer">
+          Built with 💜 for a healthier you
+        </p>
       </div>
     </div>
           }
