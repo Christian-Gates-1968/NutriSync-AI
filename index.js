@@ -8,6 +8,21 @@ const cors = require("cors")
 const multer = require("multer")
 const path = require("path")
 const Groq = require("groq-sdk")
+const fs = require("fs")
+
+// Models
+const User = require("./models/User")
+const FoodLog = require("./models/FoodLog")
+const ApiUsage = require("./models/ApiUsage")
+
+// Middleware
+const { authenticate, authorize } = require("./middleware/auth")
+
+// Route modules
+const authRoutes = require("./routes/auth")
+const adminRoutes = require("./routes/admin")
+const doctorRoutes = require("./routes/doctor")
+const foodRoutes = require("./routes/food")
 //ADDED THIS **************************
 //CRON=TO SEND DAILY MESSAGES AT MINS:HRS EG:OR 1.18 AM  TYPE 18 1***,function....  
 //run using node index.js after cd to Reminder-app-with...
@@ -34,8 +49,14 @@ if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
 //APP config
 const app = express()
 app.use(express.json())
-app.use(express.urlencoded())
+app.use(express.urlencoded({ extended: true }))
 app.use(cors())
+
+// ── Mount API routes ──
+app.use("/api/auth", authRoutes)
+app.use("/api/admin", adminRoutes)
+app.use("/api/doctor", doctorRoutes)
+app.use("/api/food", foodRoutes)
 
 // Multer config for food image uploads
 const storage = multer.diskStorage({
@@ -54,7 +75,6 @@ const upload = multer({
 })
 
 // Ensure uploads directory exists
-const fs = require("fs")
 const uploadsDir = path.join(__dirname, "uploads")
 if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir)
 
@@ -100,10 +120,25 @@ const MOCK_FOODS = [
 ]
 
 // POST /api/food/analyze-image — accepts a food photo, returns estimated macros
+// Optionally authenticated: if token provided, persists the food log
 app.post("/api/food/analyze-image", upload.single("foodImage"), async (req, res) => {
     if (!req.file) {
         return res.status(400).json({ error: "No image file provided" })
     }
+
+    // Try to extract user from token (optional — allows unauthenticated use too)
+    let userId = null
+    try {
+        const header = req.headers.authorization
+        if (header && header.startsWith("Bearer ")) {
+            const jwt = require("jsonwebtoken")
+            const JWT_SECRET = process.env.JWT_SECRET || "nutrisync-dev-secret-change-me"
+            const decoded = jwt.verify(header.split(" ")[1], JWT_SECRET)
+            userId = decoded.id
+        }
+    } catch (_) {}
+
+    const startTime = Date.now()
 
     // ── Try Groq Vision API directly ──
     if (GROQ_API_KEY) {
@@ -133,7 +168,32 @@ app.post("/api/food/analyze-image", upload.single("foodImage"), async (req, res)
             console.log("Groq response:", raw.substring(0, 200))
             const parsed = extractJSON(raw)
 
+            // Track API usage
+            if (dbConnected) {
+                ApiUsage.create({
+                    user: userId, endpoint: "/api/food/analyze-image",
+                    service: "groq", success: true, responseTime: Date.now() - startTime,
+                }).catch(() => {})
+            }
+
             if (parsed && parsed.food) {
+                // Persist food log if user is authenticated
+                let savedLog = null
+                if (userId && dbConnected) {
+                    savedLog = await FoodLog.create({
+                        user: userId, food: parsed.food,
+                        calories: Number(parsed.calories) || 0,
+                        protein: Number(parsed.protein) || 0,
+                        carbs: Number(parsed.carbs) || 0,
+                        fat: Number(parsed.fat) || 0,
+                        confidence: parsed.confidence || null,
+                        details: parsed.details || null,
+                        source: "groq",
+                        imageFilename: req.file.filename,
+                        mealType: req.body.mealType || "snack",
+                    }).catch(() => null)
+                }
+
                 return res.json({
                     success: true,
                     filename: req.file.filename,
@@ -147,10 +207,19 @@ app.post("/api/food/analyze-image", upload.single("foodImage"), async (req, res)
                     confidence: parsed.confidence || null,
                     details: parsed.details || null,
                     source: "groq",
+                    logId: savedLog ? savedLog._id : null,
                 })
             }
         } catch (err) {
             console.log("Groq API error, falling back to mock:", err.message)
+            // Track failed API usage
+            if (dbConnected) {
+                ApiUsage.create({
+                    user: userId, endpoint: "/api/food/analyze-image",
+                    service: "groq", success: false, responseTime: Date.now() - startTime,
+                    errorMessage: err.message,
+                }).catch(() => {})
+            }
         }
     } else {
         console.log("GROQ_API_KEY not set — using mock data")

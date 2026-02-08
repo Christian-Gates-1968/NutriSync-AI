@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useLocation, useHistory } from "react-router-dom";
 import { useTheme } from "context/ThemeContext";
+import { useAuth } from "context/AuthContext";
 import {
   IoHome,
   IoStatsChart,
@@ -16,57 +17,64 @@ import {
   IoAnalytics,
   IoMenu,
   IoClose,
+  IoShield,
+  IoPeople,
 } from "react-icons/io5";
 
-const navItems = [
-  {
-    label: "Dashboard",
-    path: "/dashboard",
-    icon: IoHome,
-  },
-  {
-    label: "AI Predictions",
-    path: "/ai-predictions",
-    icon: IoSparkles,
-    badge: "AI",
-  },
-  {
-    label: "Nutritional Audit",
-    path: "/nutritional-audit",
-    icon: IoAnalytics,
-    badge: "New",
-  },
+// Navigation items by role
+const patientNav = [
+  { label: "Dashboard", path: "/dashboard", icon: IoHome },
+  { label: "AI Predictions", path: "/ai-predictions", icon: IoSparkles, badge: "AI" },
+  { label: "Nutritional Audit", path: "/nutritional-audit", icon: IoAnalytics, badge: "New" },
   { type: "divider", label: "Trackers" },
-  {
-    label: "Meal Tracker",
-    path: "/tables",
-    icon: IoNutrition,
-  },
-  {
-    label: "Medicine Tracker",
-    path: "/tables2",
-    icon: IoMedkit,
-  },
-  {
-    label: "Workout Tracker",
-    path: "/billing",
-    icon: IoFitness,
-  },
-  { type: "divider", label: "Account" },
-  {
-    label: "Profile",
-    path: "/profile",
-    icon: IoPerson,
-  },
+  { label: "Meal Tracker", path: "/tables", icon: IoNutrition },
+  { label: "Medicine Tracker", path: "/tables2", icon: IoMedkit },
+  { label: "Workout Tracker", path: "/billing", icon: IoFitness },
 ];
+
+const doctorNav = [
+  { label: "My Patients", path: "/doctor", icon: IoPeople },
+];
+
+const adminNav = [
+  { label: "Admin Panel", path: "/admin", icon: IoShield, badge: "Admin" },
+];
+
+function getNavItems(role) {
+  let items = [];
+
+  // Admin sees everything
+  if (role === "admin") {
+    items = [
+      ...adminNav,
+      { type: "divider", label: "Doctor" },
+      ...doctorNav,
+      { type: "divider", label: "Patient" },
+      ...patientNav,
+    ];
+  } else if (role === "doctor") {
+    items = [
+      ...doctorNav,
+      { type: "divider", label: "Health Tools" },
+      { label: "Dashboard", path: "/dashboard", icon: IoHome },
+    ];
+  } else {
+    // patient (default)
+    items = [...patientNav];
+  }
+
+  return items;
+}
 
 export default function NutriSyncSidebar() {
   const { isDark, toggleTheme } = useTheme();
+  const { user } = useAuth();
   const location = useLocation();
   const history = useHistory();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  const navItems = getNavItems(user?.role || "patient");
   const isActive = (path) => location.pathname === path;
 
   const handleNav = (path) => {
@@ -119,7 +127,7 @@ export default function NutriSyncSidebar() {
                 NutriSync
               </h1>
               <p className="text-[10px] font-semibold tracking-widest uppercase dark:text-medical-400 text-medical-600">
-                AI Health Platform
+                {user?.role === "admin" ? "Admin" : user?.role === "doctor" ? "Doctor" : "Health Platform"}
               </p>
             </div>
           )}
@@ -174,6 +182,8 @@ export default function NutriSyncSidebar() {
                         className={`ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full ${
                           item.badge === "AI"
                             ? "bg-health-purple/20 text-health-purple"
+                            : item.badge === "Admin"
+                            ? "bg-health-red/20 text-health-red"
                             : "bg-health-green/20 text-health-green"
                         }`}
                       >

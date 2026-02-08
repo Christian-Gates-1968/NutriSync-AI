@@ -65,38 +65,68 @@ NutriSync AI is a comprehensive health tracking dashboard that integrates with G
 | **Health Data** | Google Fitness REST API |
 | **Styling** | Tailwind CSS + MUI hybrid |
 | **Build Tool** | CRACO (Create React App Configuration Override) |
-| **Backend** | Express.js, MongoDB, Mongoose |
-| **Notifications** | Twilio (WhatsApp) |
+| **Backend** | Express.js, MongoDB Atlas, Mongoose |
+| **AI** | Groq SDK (Llama 3.2 90B Vision) |
+| **Notifications** | Twilio (WhatsApp, optional) |
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 - Node.js 16+ 
 - npm 8+
+- MongoDB Atlas account (free M0 tier works)
+- Groq API key (free at [console.groq.com](https://console.groq.com))
 
 ### Installation
 
 ```bash
 # Clone the repository
-git clone https://github.com/<your-username>/NutriSync-AI.git
-cd NutriSync-AI
+git clone https://github.com/Christian-Gates-1968/NutriSync-AI.git
+cd NutriSync-AI/Health-Tracker-in-MERN
 
 # Install dependencies
 npm install --legacy-peer-deps
+```
 
-# Start development server
-# On Windows (PowerShell):
-$env:NODE_OPTIONS="--openssl-legacy-provider"
-node .\node_modules\@craco\craco\bin\craco.js start
+### Environment Variables
 
-# On macOS/Linux:
+Copy `.env.example` to `.env` and fill in your values:
+
+```bash
+cp .env.example .env
+```
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `MONGODB_URI` | ✅ | MongoDB Atlas connection string |
+| `GROQ_API_KEY` | ✅ | Groq API key for AI food analysis |
+| `GROQ_MODEL` | Optional | Defaults to `llama-3.2-90b-vision-preview` |
+| `TWILIO_ACCOUNT_SID` | Optional | For WhatsApp reminders |
+| `TWILIO_AUTH_TOKEN` | Optional | For WhatsApp reminders |
+
+### Running the App
+
+You need **two terminals** — one for the backend, one for the frontend:
+
+```bash
+# Terminal 1 — Backend (Express API on port 9000)
+node index.js
+```
+
+```powershell
+# Terminal 2 — Frontend (React dev server on port 3000)
+# Windows PowerShell:
+$env:NODE_OPTIONS="--openssl-legacy-provider"; npx craco start
+
+# macOS/Linux:
 NODE_OPTIONS=--openssl-legacy-provider npx craco start
 ```
 
-The app will be available at **http://localhost:3000**
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:9000
 
-### Dev Mode
-Click **"🚀 Preview Dashboard (Dev Mode)"** on the login page to explore the dashboard without Google authentication.
+### Login
+Enter your name and click **"Get Started"** to access the dashboard. Google OAuth is available as an optional secondary login method.
 
 ## 📁 Project Structure
 
