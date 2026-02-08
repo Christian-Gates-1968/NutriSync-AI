@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* Base layer overrides */
+@layer base {
+  body {
+    @apply font-sans antialiased;
+  }
+
+  /* Custom scrollbar for dark mode */
+  .dark ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .dark ::-webkit-scrollbar-track {
+    background: #0f172a;
+  }
+  .dark ::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 4px;
+  }
+  .dark ::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+  }
+
+  /* Light mode scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #f1f5f9;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+}
+
+/* Component layer for reusable patterns */
+@layer components {
+  .card-medical {
+    @apply rounded-2xl border transition-all duration-300;
+  }
+  .card-medical-dark {
+    @apply bg-surface-800/80 border-surface-700/50 shadow-card-dark backdrop-blur-sm;
+  }
+  .card-medical-light {
+    @apply bg-white border-surface-200 shadow-card-light;
+  }
+
+  .stat-badge {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold;
+  }
+
+  .nav-link-active {
+    @apply bg-gradient-accent text-white shadow-glow-blue;
+  }
+
+  .btn-medical {
+    @apply px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-200;
+  }
+}
